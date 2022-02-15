@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shopapp/login/login_screen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../shared/network/local/cashe_helper.dart';
+
 class BoardingItem {
   final String title;
   final String body;
@@ -39,15 +41,20 @@ class _onBoardingScreenState extends State<onBoardingScreen> {
   var boardController = PageController();
 
   bool isLast=true;
-
+void submit()async{
+  CasheHelper.saveData(key: 'onBoarding', value: true).then((value){if(value){
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>
+        LoginScreen(),), (route) => false);
+  }
+  });
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: [
           TextButton(onPressed: (){
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>
-                LoginScreen(),), (route) => false);
+            submit();
           }, child:Text("Skip"),),
         ],
       ),
@@ -109,9 +116,7 @@ class _onBoardingScreenState extends State<onBoardingScreen> {
             FloatingActionButton(
               onPressed: () {
                 if(isLast){
-                  Navigator.pushAndRemoveUntil(context,
-                      MaterialPageRoute(builder: (context) => LoginScreen(),),
-                          (route) => false);
+                  submit();
                 }
                 boardController.nextPage(
                   duration: Duration(

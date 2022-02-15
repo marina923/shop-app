@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shopapp/login/cubit/observer.dart';
 import 'package:shopapp/on_boarding/on_boarding_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shopapp/shared/network/local/cashe_helper.dart';
+import 'package:shopapp/shared/network/remote/dio_helper.dart';
 
-void main() {
+void main() async{
+  Bloc.observer = MyBlocObserver();
+  DioHelper.initial();
+  await CasheHelper.int();
+  bool onBoarding=CasheHelper.getData(key: 'onBoarding');
   runApp(const MyApp());
 }
 
