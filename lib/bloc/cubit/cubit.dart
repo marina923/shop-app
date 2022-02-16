@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
-import 'package:shopapp/login/cubit/states.dart';
+import 'package:shopapp/bloc/cubit/states.dart';
 import 'package:shopapp/models/LoginModel.dart';
 import '../../shared/network/endpoint.dart';
 import '../../shared/network/remote/dio_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-
-
-
-
 class LoginCubit extends Cubit<LoginState>{
   LoginCubit() : super(AppLoginInitialState());
   static LoginCubit get(context) => BlocProvider.of(context);

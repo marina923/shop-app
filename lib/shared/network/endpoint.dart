@@ -1,1 +1,1 @@
-const Login='login';
+const Login = 'login';

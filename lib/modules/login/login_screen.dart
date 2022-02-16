@@ -1,13 +1,13 @@
-import 'dart:ui';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
-import 'package:shopapp/login/cubit/cubit.dart';
-import 'package:shopapp/login/cubit/states.dart';
-import 'package:shopapp/register/register_screen.dart';
-import 'package:shopapp/shared/components/components.dart';
+import 'package:shopapp/bloc/cubit/cubit.dart';
+import 'package:shopapp/bloc/cubit/states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shopapp/modules/register/register_screen.dart';
+import 'package:shopapp/shared/network/local/cashe_helper.dart';
+import '../../shared/components/components.dart';
+import '../layout/shop_layout.dart';
 
 class LoginScreen extends StatelessWidget {
   var emailController = TextEditingController();
@@ -19,32 +19,27 @@ class LoginScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => LoginCubit(),
       child: BlocConsumer<LoginCubit, LoginState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state is AppLoginSuccessState) {
-              if (state.loginModel.status!) {
-                print(state.loginModel.message);
-                print(state.loginModel.data!.token);
-                Fluttertoast.showToast(
-                    msg: "${state.loginModel.message}",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.green,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
-              }
-              else {
-                print(state.loginModel.message);
-                Fluttertoast.showToast(
-                    msg: "${state.loginModel.message}",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
-              }
-
+            if (state.loginModel.status!) {
+              print(state.loginModel.message);
+              print(state.loginModel.data!.token);
+              await CasheHelper.saveData(
+                      key: 'token', value: state.loginModel.data!.token)
+                  .then((value) {
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ShopLayout(),
+                    ),
+                    (route) => false);
+              });
+            } else {
+              print(state.loginModel.message);
+              showToastState(
+                  text: '${state.loginModel.message}',
+                  state: ToastStates.ERROR);
+            }
           }
         },
         builder: (context, state) {
